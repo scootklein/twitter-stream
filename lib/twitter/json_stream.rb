@@ -277,13 +277,14 @@ module Twitter
     #   :access_secret   => [access secret]
     # }
     def oauth_header
-      uri = "http://#{@options[:host]}#{@options[:path]}"
+      uri = "http#{'s' if @options[:ssl]}://#{@options[:host]}#{@options[:path]}"
       ::ROAuth.header(@options[:oauth], uri, params, @options[:method])
     end
 
     # Normalized query hash of escaped string keys and escaped string values
     # nil values are skipped
     def params
+      return {} unless @options[:filters].any?
       { 'track' => escape(@options[:filters].join(",")) }
     end
 
