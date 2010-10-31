@@ -258,6 +258,7 @@ module Twitter
         @code = $1.to_i
         @state = :headers
         receive_error("invalid status code: #{@code}. #{ln}") unless @code == 200
+        close_connection if @code == 420
       else
         receive_error('invalid response')
         close_connection
