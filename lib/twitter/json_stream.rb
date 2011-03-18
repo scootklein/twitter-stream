@@ -196,8 +196,6 @@ module Twitter
           content = query
         end
       end
-      
-      puts "Final request: #{request_uri}"
 
       data << "#{@options[:method]} #{request_uri} HTTP/1.1"
       data << "Host: #{@options[:host]}"
