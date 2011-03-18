@@ -33,7 +33,8 @@ module Twitter
       :proxy        => ENV['HTTP_PROXY'],
       :auth         => nil,
       :oauth        => {},
-      :filters      => []
+      :filters      => [],
+      :all_replies  => false
     }
 
     attr_accessor :code
@@ -188,13 +189,15 @@ module Twitter
 
       content = @options[:content]
 
-      if !@options[:filters].empty?
+      if !@options[:filters].empty? || @options[:all_replies]
         if @options[:method].to_s.upcase == 'GET'
           request_uri << "?#{query}"
         else
           content = query
         end
       end
+      
+      puts "Final request: #{request_uri}"
 
       data << "#{@options[:method]} #{request_uri} HTTP/1.1"
       data << "Host: #{@options[:host]}"
@@ -285,8 +288,11 @@ module Twitter
     # Normalized query hash of escaped string keys and escaped string values
     # nil values are skipped
     def params
-      return {} unless @options[:filters].any?
-      { 'track' => escape(@options[:filters].join(",")) }
+      opts = {}
+      opts['track'] = escape(@options[:filters].join(",")) if @options[:filters].any?
+      opts['replies'] = 'all' if @options[:all_replies]
+      
+      return opts
     end
 
     def query
